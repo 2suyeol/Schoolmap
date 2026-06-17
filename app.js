@@ -14,13 +14,25 @@ let selectedIndex = null;        // 현재 클릭된 학교 인덱스
 
 /* ---------- 지도 만들기 ---------- */
 function initMap() {
-  map = L.map("map", { zoomControl: true, attributionControl: true })
-         .setView(KOREA_VIEW.center, KOREA_VIEW.zoom);
+  // 우리나라를 벗어나지 못하게 지도 영역을 한반도 주변으로 제한
+  const KOREA_BOUNDS = L.latLngBounds(
+    [33.0, 124.0],   // 남서쪽 끝 (제주 아래 ~ 서해 백령도)
+    [38.9, 132.2]    // 북동쪽 끝 (강원 북부 ~ 독도)
+  );
+
+  map = L.map("map", {
+    zoomControl: true,
+    attributionControl: true,
+    maxBounds: KOREA_BOUNDS,   // 이 영역 밖으로는 못 나가게
+    maxBoundsViscosity: 1.0,   // 경계를 단단한 벽처럼 고정 (1.0 = 완전 고정)
+    minZoom: 7,                // 너무 축소해서 다른 나라가 보이지 않게
+  }).setView(KOREA_VIEW.center, KOREA_VIEW.zoom);
 
   // 전 세계에서 가장 안정적으로 열리는 OSM 기본 타일
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
+    bounds: KOREA_BOUNDS,      // 한국 밖 타일은 불러오지 않음
   }).addTo(map);
 
   // 레이아웃이 잡힌 뒤 지도 크기를 다시 계산 (간혹 첫 렌더에서 회색으로 보이는 문제 방지)
