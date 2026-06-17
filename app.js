@@ -8,7 +8,7 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const FLY = reduceMotion ? 0 : 0.8;
 
 let map;
-let activeRegion = "gyeonggi";   // 처음 선택된 지역 ("all" = 전체, "gyeonggi" = 경기도)
+let activeRegion = "all";        // 처음 선택된 지역 ("all" = 전체)
 let markers = [];                // { marker, index } 목록
 let selectedIndex = null;        // 현재 클릭된 학교 인덱스
 
@@ -20,8 +20,9 @@ function initMap() {
     [38.9, 132.2]    // 북동쪽 끝 (강원 북부 ~ 독도)
   );
 
-  // 처음 보여줄 화면: 선택된 지역 기준 (activeRegion 이 "all" 이면 전국)
-  const start = activeRegion === "all" ? KOREA_VIEW : REGIONS[activeRegion];
+  // 처음 들어왔을 때 보여줄 화면(카메라)만 경기도로.
+  // 선택은 "전체"라서 모든 지역 학교가 다 보여요. 카메라 위치만 바꾸려면 아래 한 줄을 고치세요.
+  const start = REGIONS.gyeonggi;   // 예: REGIONS.seoul 로 바꾸면 서울로 열려요
 
   map = L.map("map", {
     zoomControl: true,
