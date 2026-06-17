@@ -41,6 +41,15 @@ function initMap() {
 
   // 레이아웃이 잡힌 뒤 지도 크기를 다시 계산 (간혹 첫 렌더에서 회색으로 보이는 문제 방지)
   setTimeout(() => map.invalidateSize(), 200);
+
+  // 학교가 많아 이름표가 겹치지 않게: 충분히 확대했을 때만 이름표 표시
+  const LABEL_ZOOM = 13;     // 이 배율 이상으로 확대하면 학교 이름이 보여요
+  const container = map.getContainer();
+  function updateLabels() {
+    container.classList.toggle("labels-on", map.getZoom() >= LABEL_ZOOM);
+  }
+  map.on("zoomend", updateLabels);
+  updateLabels();
 }
 
 /* ---------- 왼쪽 지역 목록 ---------- */

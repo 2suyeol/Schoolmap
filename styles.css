@@ -202,6 +202,7 @@ html, body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 .school-marker .label {
+  display: none;            /* 평소엔 숨김 — 확대하면(또는 선택 시) 나타남 */
   position: absolute;
   top: 17px; left: 7px;
   transform: translateX(-50%);
@@ -214,12 +215,15 @@ html, body {
   border-radius: 5px;
   cursor: pointer;
 }
+/* 지도를 충분히 확대하면 모든 이름표 표시 */
+#map.labels-on .school-marker .label { display: block; }
 .school-marker.is-active .pin {
   background: var(--accent);
   width: 18px; height: 18px;
   margin: -2px;
 }
 .school-marker.is-active .label {
+  display: block;
   background: var(--accent);
   color: #2a1d05;
   font-weight: 700;
