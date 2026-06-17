@@ -1,0 +1,340 @@
+/* =========================================================================
+   styles.css — 색/글꼴/레이아웃
+   색을 바꾸고 싶으면 아래 :root 의 변수만 고치면 전체에 적용돼요.
+   ========================================================================= */
+
+:root {
+  --ink:        #14253f;   /* 진한 남색 (사이드바, 글자) */
+  --ink-soft:   #243a5e;
+  --accent:     #e0992b;   /* 강조색 (선택됨) */
+  --paper:      #fbfaf7;   /* 부드러운 흰색 */
+  --line:       #e6e8ee;   /* 옅은 구분선 */
+  --text:       #1a2436;
+  --muted:      #707d92;
+  --shadow:     0 10px 30px rgba(20, 37, 63, 0.16);
+  --radius:     14px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Pretendard", system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--paper);
+}
+
+/* ---------- 전체 레이아웃 ---------- */
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+}
+
+/* ---------- 상단 헤더 ---------- */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--ink);
+  color: #fff;
+  z-index: 1000;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+.brand-mark {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+.brand-sub {
+  font-size: 12px;
+  color: #aeb9cd;
+}
+
+/* 검색 */
+.search {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+  margin-left: auto;
+}
+#search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+#search-input::placeholder { color: #b9c2d4; }
+#search-input:focus {
+  outline: none;
+  background: #fff;
+  color: var(--text);
+  border-color: var(--accent);
+}
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  list-style: none;
+  margin: 0; padding: 6px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.search-results.is-open { display: block; }
+.search-results button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+}
+.search-results button:hover { background: var(--paper); }
+.r-region { font-size: 12px; color: var(--muted); }
+.search-empty {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* 모바일 사이드바 토글 버튼 (기본은 숨김) */
+.sidebar-toggle {
+  display: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ---------- 본문: 사이드바 + 지도 ---------- */
+.main {
+  position: relative;
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  min-height: 0;
+}
+
+.sidebar {
+  background: var(--ink);
+  color: #e8ecf3;
+  overflow-y: auto;
+  padding: 16px 12px;
+}
+.sidebar-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8d99b1;
+  margin: 4px 8px 12px;
+}
+.region-list { list-style: none; margin: 0; padding: 0; }
+.region-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 2px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: #cdd5e3;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.region-item:hover { background: var(--ink-soft); color: #fff; }
+.region-item.is-active {
+  background: var(--accent);
+  color: #2a1d05;
+  font-weight: 700;
+}
+.region-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+.region-item.is-active .region-count {
+  background: rgba(0, 0, 0, 0.14);
+}
+
+/* 지도 */
+#map { width: 100%; height: 100%; }
+
+/* ---------- 지도 위 학교 마커 ---------- */
+.school-marker { position: relative; }
+.school-marker .pin {
+  display: block;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2.5px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.school-marker .label {
+  position: absolute;
+  top: 17px; left: 7px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 1px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.school-marker.is-active .pin {
+  background: var(--accent);
+  width: 18px; height: 18px;
+  margin: -2px;
+}
+.school-marker.is-active .label {
+  background: var(--accent);
+  color: #2a1d05;
+  font-weight: 700;
+}
+
+/* ---------- 학교 설명창 ---------- */
+.info-panel {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 320px;
+  max-width: calc(100% - 36px);
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 22px 20px;
+  z-index: 900;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.info-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.info-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  border: none;
+  background: var(--paper);
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+}
+.info-close:hover { background: var(--line); color: var(--text); }
+.info-eyebrow {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.info-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.info-type {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.info-desc {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.info-grid {
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+}
+.info-row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 13.5px;
+}
+.info-row dt { color: var(--muted); }
+.info-row dd { margin: 0; color: var(--text); }
+.info-link {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1px;
+}
+
+/* 키보드 포커스 표시 */
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- 모바일 ---------- */
+@media (max-width: 720px) {
+  .brand-sub { display: none; }
+  .sidebar-toggle { display: block; order: -1; }
+  .main { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 1100;
+    box-shadow: var(--shadow);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+
+  .info-panel {
+    top: auto;
+    bottom: 12px;
+    left: 12px; right: 12px;
+    width: auto;
+  }
+}
