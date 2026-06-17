@@ -17,11 +17,14 @@ function initMap() {
   map = L.map("map", { zoomControl: true, attributionControl: true })
          .setView(KOREA_VIEW.center, KOREA_VIEW.zoom);
 
-  // 깔끔한 밝은 지도 타일 (API 키 불필요)
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
+  // 전 세계에서 가장 안정적으로 열리는 OSM 기본 타일
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
   }).addTo(map);
+
+  // 레이아웃이 잡힌 뒤 지도 크기를 다시 계산 (간혹 첫 렌더에서 회색으로 보이는 문제 방지)
+  setTimeout(() => map.invalidateSize(), 200);
 }
 
 /* ---------- 왼쪽 지역 목록 ---------- */
@@ -219,11 +222,33 @@ function closeSidebarOnMobile() {
   }
 }
 
+/* ---------- 지도 라이브러리 로드 실패 시 안내 ---------- */
+function showMapError(message) {
+  const el = document.getElementById("map");
+  el.innerHTML =
+    `<div style="display:flex;align-items:center;justify-content:center;height:100%;
+                 padding:24px;text-align:center;color:#707d92;font-size:14px;line-height:1.6">
+       <div>지도를 불러오지 못했어요.<br>${message}</div>
+     </div>`;
+}
+
 /* ---------- 시작 ---------- */
 document.addEventListener("DOMContentLoaded", () => {
-  initMap();
+  // 지도와 상관없이 항상 동작해야 하는 것들 먼저
   renderRegionList();
-  renderMarkers();
   initSearch();
   initSidebarToggle();
+
+  // 지도는 라이브러리(Leaflet)가 있어야 함 — 실패해도 위 기능은 살아있게
+  if (typeof L === "undefined") {
+    showMapError("인터넷 연결을 확인하고 새로고침 해보세요. (Leaflet 로드 실패)");
+    return;
+  }
+  try {
+    initMap();
+    renderMarkers();
+  } catch (e) {
+    showMapError("새로고침 해보세요.");
+    console.error(e);
+  }
 });
