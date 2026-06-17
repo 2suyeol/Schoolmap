@@ -8,7 +8,7 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const FLY = reduceMotion ? 0 : 0.8;
 
 let map;
-let activeRegion = "all";        // 현재 선택된 지역 키 ("all" = 전체)
+let activeRegion = "gyeonggi";   // 처음 선택된 지역 ("all" = 전체, "gyeonggi" = 경기도)
 let markers = [];                // { marker, index } 목록
 let selectedIndex = null;        // 현재 클릭된 학교 인덱스
 
@@ -20,13 +20,16 @@ function initMap() {
     [38.9, 132.2]    // 북동쪽 끝 (강원 북부 ~ 독도)
   );
 
+  // 처음 보여줄 화면: 선택된 지역 기준 (activeRegion 이 "all" 이면 전국)
+  const start = activeRegion === "all" ? KOREA_VIEW : REGIONS[activeRegion];
+
   map = L.map("map", {
     zoomControl: true,
     attributionControl: true,
     maxBounds: KOREA_BOUNDS,   // 이 영역 밖으로는 못 나가게
     maxBoundsViscosity: 1.0,   // 경계를 단단한 벽처럼 고정 (1.0 = 완전 고정)
     minZoom: 7,                // 너무 축소해서 다른 나라가 보이지 않게
-  }).setView(KOREA_VIEW.center, KOREA_VIEW.zoom);
+  }).setView(start.center, start.zoom);
 
   // 전 세계에서 가장 안정적으로 열리는 OSM 기본 타일
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
